@@ -6,6 +6,8 @@ using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Modularity;
 using Volo.Abp.TenantManagement;
+using Microsoft.Extensions.DependencyInjection;
+using ProductManagement.Settings;
 
 namespace ProductManagement;
 
@@ -27,5 +29,7 @@ public class ProductManagementApplicationModule : AbpModule
         {
             options.AddMaps<ProductManagementApplicationModule>();
         });
+        var configuration = context.Services.GetConfiguration();
+        Configure<AzureSmsServiceOptions>(configuration.GetSection("AzureSmsService"));
     }
 }

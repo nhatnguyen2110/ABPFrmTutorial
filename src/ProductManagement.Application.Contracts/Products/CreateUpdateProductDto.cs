@@ -1,13 +1,13 @@
-﻿using ProductManagement.Categories;
-using System;
-using Volo.Abp.Domain.Entities.Auditing;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductManagement.Products
 {
-    public class Product : FullAuditedAggregateRoot<Guid>
+    public class CreateUpdateProductDto
     {
-        public Category Category { get; set; }
         public Guid CategoryId { get; set; }
+        [Required]
+        [StringLength(ProductConsts.MaxNameLength)]
         public string? Name { get; set; }
         public float Price { get; set; }
         public bool IsFreeCargo { get; set; }

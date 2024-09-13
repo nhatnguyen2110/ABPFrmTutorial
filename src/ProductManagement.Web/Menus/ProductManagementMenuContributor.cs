@@ -24,17 +24,21 @@ public class ProductManagementMenuContributor : IMenuContributor
     {
         var l = context.GetLocalizer<ProductManagementResource>();
 
-        //Home
-        context.Menu.AddItem(
-            new ApplicationMenuItem(
-                ProductManagementMenus.Home,
-                l["Menu:Home"],
-                "~/",
-                icon: "fa fa-home",
-                order: 1
+        context.Menu
+            .AddItem(
+                new ApplicationMenuItem(
+                    "ProductManagement",
+                    l["Menu:ProductManagement"],
+                    icon: "fas fa-shopping-cart"
+                    )
+            .AddItem(
+                new ApplicationMenuItem(
+                    "ProductManagement.Products",
+                    l["Menu:Products"],
+                    url: "/Products"
+                )
             )
-        );
-
+         );
 
         //Administration
         var administration = context.Menu.GetAdministration();
@@ -42,7 +46,7 @@ public class ProductManagementMenuContributor : IMenuContributor
 
         //Administration->Identity
         administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);
-    
+
         if (MultiTenancyConsts.IsEnabled)
         {
             administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);
@@ -51,12 +55,12 @@ public class ProductManagementMenuContributor : IMenuContributor
         {
             administration.TryRemoveMenuItem(TenantManagementMenuNames.GroupName);
         }
-        
+
         administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 3);
 
         //Administration->Settings
         administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 7);
-        
+
         return Task.CompletedTask;
     }
 }
