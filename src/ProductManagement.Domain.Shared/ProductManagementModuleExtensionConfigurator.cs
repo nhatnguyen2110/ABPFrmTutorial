@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Volo.Abp.Identity;
+﻿using ProductManagement.Users;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.Threading;
 
@@ -67,5 +67,36 @@ public static class ProductManagementModuleExtensionConfigurator
          * See the documentation for more:
          * https://docs.abp.io/en/abp/latest/Module-Entity-Extensions
          */
+        ObjectExtensionManager.Instance.Modules()
+              .ConfigureIdentity(identity =>
+              {
+                  identity.ConfigureUser(user =>
+                  {
+                      user.AddOrUpdateProperty<string>( //property type: string
+                          UserConsts.TitlePropertyName, //property name
+                          property =>
+                          {
+                              //validation rules
+                              property.Attributes.Add(new RequiredAttribute());
+                              property.Attributes.Add(new StringLengthAttribute(UserConsts.MaxTitleLength));
+                              property.UI.Order = 6;
+                              //...other configurations for this property
+
+                          }
+                      );
+                      user.AddOrUpdateProperty<string>( //property type: string
+                          UserConsts.ReputationPropertyName, //property name
+                          property =>
+                          {
+                              //validation rules
+                              property.DefaultValue = UserConsts.MinReputationValue;
+                              property.Attributes.Add(new RangeAttribute(UserConsts.MinReputationValue, UserConsts.MaxReputationValue));
+                              property.UI.Order = 7;
+                              //...other configurations for this property
+                              property.Configuration[IdentityModuleExtensionConsts.ConfigurationNames.AllowUserToEdit] = false;
+                          }
+                      );
+                  });
+              });
     }
 }

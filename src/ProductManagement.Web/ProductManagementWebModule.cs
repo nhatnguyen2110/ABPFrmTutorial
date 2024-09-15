@@ -1,52 +1,41 @@
-using System.IO;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
 using ProductManagement.EntityFrameworkCore;
 using ProductManagement.Localization;
 using ProductManagement.MultiTenancy;
-using ProductManagement.Permissions;
 using ProductManagement.Web.Menus;
-using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
 using Volo.Abp;
-using Volo.Abp.Studio;
+using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-using Volo.Abp.Autofac;
-using Volo.Abp.AutoMapper;
-using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement;
-using Volo.Abp.PermissionManagement.Web;
-using Volo.Abp.UI.Navigation.Urls;
-using Volo.Abp.UI;
-using Volo.Abp.UI.Navigation;
-using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.Identity.Web;
-using OpenIddict.Server.AspNetCore;
-using OpenIddict.Validation.AspNetCore;
-using Volo.Abp.TenantManagement.Web;
-using System;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
-using Volo.Abp.Account.Web;
-using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
-using Volo.Abp.Identity;
-using Volo.Abp.Swashbuckle;
+using Volo.Abp.Autofac;
+using Volo.Abp.AutoMapper;
+using Volo.Abp.Identity.Web;
+using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
+using Volo.Abp.PermissionManagement;
 using Volo.Abp.Security.Claims;
-using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
+using Volo.Abp.Swashbuckle;
+using Volo.Abp.TenantManagement.Web;
+using Volo.Abp.UI.Navigation;
+using Volo.Abp.UI.Navigation.Urls;
+using Volo.Abp.VirtualFileSystem;
 
 namespace ProductManagement.Web;
 
@@ -170,6 +159,30 @@ public class ProductManagementWebModule : AbpModule
         {
             options.IsDynamicClaimsEnabled = true;
         });
+
+        var configuration = context.Services.GetConfiguration();
+        context.Services.AddAuthentication()
+            .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+            })
+            .AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+            })
+            .AddMicrosoftAccount(microsoftOptions =>
+            {
+                microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"];
+                microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"];
+            })
+            .AddGitHub(options =>
+            {
+                options.ClientSecret = configuration["Authentication:Github:ClientId"];
+                options.ClientId = configuration["Authentication:Github:ClientSecret"];
+            })
+            ;
     }
 
     private void ConfigureAutoMapper()

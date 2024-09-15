@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using ProductManagement.Categories;
+using ProductManagement.Permissions;
 using ProductManagement.Settings;
 using System;
 using System.Collections.Generic;
@@ -25,14 +27,14 @@ namespace ProductManagement.Products
             _configuration = configuration;
             _options = options.Value;
         }
-
+        [Authorize(ProductManagementPermissions.ProductCreation)]
         public async Task CreateAsync(CreateUpdateProductDto input)
         {
             await _productRepository.InsertAsync(
                     ObjectMapper.Map<CreateUpdateProductDto, Product>(input)
             );
         }
-
+        [Authorize(ProductManagementPermissions.ProductDeletion)]
         public async Task DeleteAsync(Guid id)
         {
             await _productRepository.DeleteAsync(id);
@@ -66,11 +68,19 @@ namespace ProductManagement.Products
             var products = await
                 AsyncExecuter.ToListAsync(queryable);
             var count = await _productRepository.GetCountAsync();
-            return new PagedResultDto<ProductDto>(count,ObjectMapper.Map<List<Product>,List<ProductDto>>(products));
+            return new PagedResultDto<ProductDto>(count, ObjectMapper.Map<List<Product>, List<ProductDto>>(products));
         }
-
+        [Authorize(ProductManagementPermissions.ProductUpdation)]
         public async Task UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
+            //await AuthorizationService.CheckAsync(ProductManagementPermissions.ProductUpdation);
+            //var result = await AuthorizationService.AuthorizeAsync(ProductManagementPermissions.ProductUpdation);
+            ////var result = await AuthorizationService.i(ProductManagementPermissions.ProductUpdation);
+            //if (!result.Succeeded)
+            //{
+            //    // logic
+            //    throw new AbpAuthorizationException("...");
+            //}
             var product = await _productRepository.GetAsync(id);
             ObjectMapper.Map(input, product);
         }

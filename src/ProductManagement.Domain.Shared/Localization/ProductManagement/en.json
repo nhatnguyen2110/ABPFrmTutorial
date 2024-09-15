@@ -21,8 +21,10 @@
     "IsFreeCargo": "Free Cargo",
     "ReleaseDate": "Release Date",
     "ProductDeletionConfirmationMessage": "Are you sure to delete this book: {0}",
-    "SuccessfullyDeleted": "Successfully deleted!"
-
-
+    "SuccessfullyDeleted": "Successfully deleted!",
+    "ProductManagement": "Product Management",
+    "ProductManagement.ProductCreation": "Create Product",
+    "ProductManagement.ProductDeletion": "Delete Product",
+    "ProductManagement.ProductUpdation": "Update Product"
   }
 }
