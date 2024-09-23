@@ -1,4 +1,5 @@
 ﻿using ProductManagement.Users;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.Threading;
@@ -67,6 +68,43 @@ public static class ProductManagementModuleExtensionConfigurator
          * See the documentation for more:
          * https://docs.abp.io/en/abp/latest/Module-Entity-Extensions
          */
-        
+        ObjectExtensionManager.Instance.Modules()
+              .ConfigureIdentity(identity =>
+              {
+                  identity.ConfigureUser(user =>
+                  {
+                      user.AddOrUpdateProperty<string>(
+                          UserConsts.AddressPropertyName, 
+                          property =>
+                          {
+                              //validation rules
+                              property.Attributes.Add(new StringLengthAttribute(UserConsts.MaxAddressLength));
+                              property.UI.Order = 1;
+                              property.Configuration[IdentityModuleExtensionConsts.ConfigurationNames.AllowUserToEdit] = true;
+                          }
+                      );
+                      user.AddOrUpdateProperty<GenderType>(
+                          UserConsts.GenderPropertyName,
+                          property =>
+                          {
+                              //validation rules
+                              property.Attributes.Add(new RequiredAttribute());
+                              property.DefaultValue = GenderType.Unknown;
+                              property.UI.Order = 7;
+                              property.Configuration[IdentityModuleExtensionConsts.ConfigurationNames.AllowUserToEdit] = true;
+                          }
+                      );
+                      user.AddOrUpdateProperty<DateTime?>(
+                          UserConsts.BirthdayPropertyName,
+                          property =>
+                          {
+                              //validation rules
+                              property.UI.Order = 8;
+                              property.Attributes.Add(new DataTypeAttribute(DataType.DateTime));
+                              property.Configuration[IdentityModuleExtensionConsts.ConfigurationNames.AllowUserToEdit] = true;
+                          }
+                      );
+                  });
+              });
     }
 }

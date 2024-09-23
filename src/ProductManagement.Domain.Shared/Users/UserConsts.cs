@@ -2,14 +2,12 @@
 {
     public static class UserConsts
     {
-        public const string TitlePropertyName = "Title";
+        public const string AddressPropertyName = "Address";
 
-        public const string ReputationPropertyName = "Reputation";
+        public const string GenderPropertyName = "Gender";
 
-        public const int MaxTitleLength = 64;
+        public const string BirthdayPropertyName = "Birthday";
 
-        public const double MaxReputationValue = 1_000;
-
-        public const double MinReputationValue = 1;
+        public const int MaxAddressLength = 500;
     }
 }
